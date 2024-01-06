@@ -1,4 +1,3 @@
-from database import db
 from pydantic import BaseModel
 
 class Token(BaseModel):

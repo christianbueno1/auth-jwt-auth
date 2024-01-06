@@ -1,5 +1,6 @@
 ## tips
 ```
+uvicorn main:app --reload
 
 ```
 
@@ -30,3 +31,17 @@ MONGO_DB=register
 - files structure https://fastapi.tiangolo.com/tutorial/bigger-applications/
 
 - routers/users.py
+
+## arjancodes
+
+- code class https://github.com/ArjanCodes/examples/blob/main/2022/unit_testing/after_refactor/pay/processor.py
+
+
+## print
+```
+import pprint
+printer = pprint.PrettyPrinter()
+
+printer.pprint(person)
+
+```
