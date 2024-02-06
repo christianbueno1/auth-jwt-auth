@@ -11,12 +11,24 @@ from os import getenv
 
 from models.tokens import Token, TokenData
 from models.users import User, UserInDB
+import logging
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
 SECRET_KEY = getenv("SECRET_KEY")
 ALGORITHM = getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    getenv("FRONTEND_URL"),
+]
+
+# AttributeError: module 'bcrypt' has no attribute '__about__'
+logging.getLogger('passlib').setLevel(logging.ERROR)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -41,7 +53,7 @@ def get_password_hash(password):
 
 def authenticate_user(username: str, password: str):
     user = get_user(username)
-    print(f"user.username: {user["username"]}")
+    print(f"user.username or user['username']: {user["username"]}")
     if not user:
         return False
     if not verify_password(password, user["hashed_password"]):
@@ -92,6 +104,7 @@ async def get_current_active_user(current_user: UserInDB = Depends(get_current_u
 @app.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
+    print(f"user: {user}")
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
@@ -109,9 +122,14 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
 @app.get("/users/me/items")
 async def read_own_items(current_user: User = Depends(get_current_active_user)):
     # return Response([{"item_id": 1, "owner": current_user}], media_type="application/json")
-    res = [{"item_id": 1, "owner": current_user}]
+    # current_user["id"] = str(current_user["_id"])
+    current_user_id = str(current_user["_id"])
+    # remove the _id field from the user
+    del[current_user["_id"]]
+
+    res = [{"item_id": current_user_id, "owner": current_user}]
     return res
 
 
-# password_hashed = get_password_hash("password123")
+# password_hashed = get_password_hash("bob123")
 # print(f"password_hashed: {password_hashed}")

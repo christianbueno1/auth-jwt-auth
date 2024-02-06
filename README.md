@@ -1,6 +1,18 @@
 ## tips
 ```
+# run the app
 uvicorn main:app --reload
+#
+url/docs
+
+
+lloggin package
+debug
+info
+warning
+error
+critical
+
 
 ```
 
@@ -9,6 +21,7 @@ uvicorn main:app --reload
 fastapi
 uvicorn[standard]
 python-multipart
+
 python-jose[cryptography]
 passlib[bcrypt]
 pymongo
@@ -45,3 +58,16 @@ printer = pprint.PrettyPrinter()
 printer.pprint(person)
 
 ```
+
+## document
+```
+{
+  "username": "bob",
+  "fullname": "bob marly",
+  "email": "bob@ibm.com",
+  "hashed_password": "$2b$12$tbc.zGujzSB/PZh6izzbUu9x.gHrxhi6khP2EzT/F0I8/ZOMeLlGa",
+  "disabled": false
+}
+
+```
+
