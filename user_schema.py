@@ -15,4 +15,10 @@ def get_user(username: str):
     # pprint(f"result: {result}")
     return result
 
-printer.pprint(f"get_user: {get_user('tom')}")
+def get_user_by_email(email: str):
+    db = get_database()
+    collection = db[collection_name]
+    result = collection.find_one({"email": email})
+    return result
+
+printer.pprint(f"get_user: {get_user('bob')}")

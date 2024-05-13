@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from user_schema import get_user
+from user_schema import get_user, get_user_by_email
 
 from dotenv import load_dotenv
 from os import getenv
@@ -35,6 +35,13 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -52,8 +59,11 @@ def get_password_hash(password):
 
 
 def authenticate_user(username: str, password: str):
-    user = get_user(username)
-    print(f"user.username or user['username']: {user["username"]}")
+    print(f"username: {username} and password: {password}")
+    # user = get_user(username)
+    user = get_user_by_email(username)
+    print(f"user: {user}")
+    print(f"user.username or user['username']: {user['username']}")
     if not user:
         return False
     if not verify_password(password, user["hashed_password"]):
