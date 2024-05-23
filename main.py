@@ -1,10 +1,11 @@
 from fastapi import Depends, FastAPI, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from user_schema import get_user, get_user_by_email
+from typing import Optional
 
 from dotenv import load_dotenv
 from os import getenv
@@ -59,11 +60,11 @@ def get_password_hash(password):
 
 
 def authenticate_user(username: str, password: str):
-    print(f"username: {username} and password: {password}")
+    print(f"email: {username} and password: {password}")
     # user = get_user(username)
     user = get_user_by_email(username)
     print(f"user: {user}")
-    print(f"user.username or user['username']: {user['username']}")
+    print(f"user.emial or user['emial']: {user['emial']}")
     if not user:
         return False
     if not verify_password(password, user["hashed_password"]):
@@ -72,12 +73,12 @@ def authenticate_user(username: str, password: str):
     return user
 
 
-def create_access_token(data: dict, expires_delta: timedelta or None = None):
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
 
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
