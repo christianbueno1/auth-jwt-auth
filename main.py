@@ -64,7 +64,7 @@ def authenticate_user(username: str, password: str):
     # user = get_user(username)
     user = get_user_by_email(username)
     print(f"user: {user}")
-    print(f"user.emial or user['emial']: {user['emial']}")
+    print(f"user.email or user['email']: {user['email']}")
     if not user:
         return False
     if not verify_password(password, user["hashed_password"]):
@@ -106,7 +106,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 
 async def get_current_active_user(current_user: UserInDB = Depends(get_current_user)):
-    if current_user["disabled"]:
+    if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
 
     return current_user
